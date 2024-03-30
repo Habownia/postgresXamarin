@@ -4,9 +4,19 @@
              x:Class="Postgres.MainPage">
 
     <StackLayout VerticalOptions="Center" Padding="20">
-        <Entry x:Name="input1" Placeholder="Wprowadź wartość 1" />
-        <Entry x:Name="input2" Placeholder="Wprowadź wartość 2" />
-        <Button Text="Oblicz" Clicked="Button_Clicked"/>
+        <ListView x:Name="postListView"
+                  HasUnevenRows="True">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Padding="10">
+                            <Label Text="{Binding Name}" FontSize="20" />
+                            <Label Text="{Binding Description}" FontSize="16" />
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </StackLayout>
 
 </ContentPage>

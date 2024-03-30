@@ -1,8 +1,11 @@
 ﻿using Npgsql;
+using Postgres.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +21,8 @@ namespace Postgres
         {
             InitializeComponent();
 
-            ExecInsert(12, "a", "b");
+            //ExecInsert(12, "a", "b");
+            ShowAllPosts();
         }
 
 
@@ -32,7 +36,6 @@ namespace Postgres
             catch (Exception ex) { Console.WriteLine($"Connection to DB failed: {ex.Message}"); }
 
             return conn;
-
         }
 
 
@@ -57,6 +60,25 @@ namespace Postgres
 
 
 
+        public async void ShowAllPosts()
+        {
+            var cmd = new NpgsqlCommand("SELECT * FROM posts", await conn);
+            var reader = await cmd.ExecuteReaderAsync();
+
+            var posts = new ObservableCollection<Post>();
+
+            while (await reader.ReadAsync())
+            {
+                var id = (int)reader["id"];
+                var name = (string)reader["name"];
+                var desc = (string)reader["description"];
+
+                posts.Add(new Post { Id = id, Name = name, Description = desc });
+            }
+
+            postListView.ItemsSource = posts;
+        }
+
         /// <summary>
         /// Method that returns the host address depending on the device platform
         /// </summary>
@@ -70,11 +92,5 @@ namespace Postgres
             return "localhost";
         }
 
-
-
-        private void Button_Clicked(object sender, EventArgs e)
-        {
-
-        }
     }
 }
