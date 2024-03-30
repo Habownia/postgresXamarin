@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -12,19 +13,14 @@ namespace Postgres
     public partial class MainPage : ContentPage
     {
         public static Task<NpgsqlConnection> conn = InitDB();
+
         public MainPage()
         {
             InitializeComponent();
 
-            ExecCommand();
+            ExecInsert(12, "a", "b");
         }
 
-        public async void ExecCommand()
-        {
-            var cmd = new NpgsqlCommand("INSERT INTO posts (id, name, description) VALUES (22, 'test', 'desc');", await conn);
-            try { await cmd.ExecuteNonQueryAsync(); }
-            catch (Exception ex) { Console.WriteLine($"Query execution failed: {ex.Message}"); }
-        }
 
         public static async Task<NpgsqlConnection> InitDB()
         {
@@ -33,11 +29,33 @@ namespace Postgres
             var conn = new NpgsqlConnection(connStr);
 
             try { await conn.OpenAsync(); }
-            catch (Exception ex) { Console.WriteLine($"Connection to DB failed: {ex.Message}");}
+            catch (Exception ex) { Console.WriteLine($"Connection to DB failed: {ex.Message}"); }
 
             return conn;
 
         }
+
+
+
+        public async void ExecInsert(int id, string name, string desc)
+        {
+            // https://www.npgsql.org/doc/basic-usage.html#parameters
+            var cmd = new NpgsqlCommand("INSERT INTO posts (id, name, description) VALUES ($1, $2, $3)", await conn)
+            {
+                Parameters =
+                {
+                    new NpgsqlParameter() { Value = id }, 
+                    new NpgsqlParameter() { Value = name}, 
+                    new NpgsqlParameter() { Value = desc} 
+                }
+            };
+
+
+            try { await cmd.ExecuteNonQueryAsync(); }
+            catch (Exception ex) { Console.WriteLine($"Query execution failed: {ex.Message}"); }
+        }
+
+
 
         /// <summary>
         /// Method that returns the host address depending on the device platform
@@ -49,7 +67,14 @@ namespace Postgres
 
             if (platform == Device.Android) return "10.0.2.2";
 
-               return "localhost";
+            return "localhost";
+        }
+
+
+
+        private void Button_Clicked(object sender, EventArgs e)
+        {
+
         }
     }
 }
