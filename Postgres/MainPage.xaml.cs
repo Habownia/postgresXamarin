@@ -29,7 +29,7 @@ namespace Postgres
         public static async Task<NpgsqlConnection> InitDB()
         {
             // nie powinno się dawać hasła do db w kodzie, ale w takim razie jak Pan miałby to odpalić? ;)
-            string connStr = "Host=10.0.2.2;Username=postgres;Password=postgres;Database=blog";
+            string connStr = $"Host={GetHost()};Username=postgres;Password=postgres;Database=blog";
             var conn = new NpgsqlConnection(connStr);
 
             try { await conn.OpenAsync(); }
@@ -37,6 +37,19 @@ namespace Postgres
 
             return conn;
 
+        }
+
+        /// <summary>
+        /// Method that returns the host address depending on the device platform
+        /// </summary>
+        /// <returns>Host address</returns>
+        public static string GetHost()
+        {
+            var platform = Device.RuntimePlatform;
+
+            if (platform == Device.Android) return "10.0.2.2";
+
+               return "localhost";
         }
     }
 }
