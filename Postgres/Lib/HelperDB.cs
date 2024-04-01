@@ -40,7 +40,7 @@ namespace Postgres.Lib
 
 
 
-        public async void ExecInsert(string name, string desc)
+        public async Task<bool> ExecInsert(string name, string desc)
         {
             var conn = await InitDB();
 
@@ -56,10 +56,16 @@ namespace Postgres.Lib
             };
 
 
-            try { await cmd.ExecuteNonQueryAsync(); }
-            catch (Exception ex) { Console.WriteLine($"Query execution failed: {ex.Message}"); }
+            try { 
+                await cmd.ExecuteNonQueryAsync(); 
+                return true;
+            }
+            catch (Exception ex) { 
+                Console.WriteLine($"Query execution failed: {ex.Message}");
+                return false;
+            }
+            finally { await conn.CloseAsync(); }
 
-            await conn.CloseAsync();
         }
 
         /// <summary>
