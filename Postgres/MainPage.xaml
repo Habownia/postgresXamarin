@@ -3,20 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Postgres.MainPage">
 
-    <StackLayout VerticalOptions="Center" Padding="20">
-        <ListView x:Name="postListView"
-                  HasUnevenRows="True">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell>
-                        <StackLayout Padding="10">
-                            <Label Text="{Binding Name}" FontSize="20" />
-                            <Label Text="{Binding Description}" FontSize="16" />
-                        </StackLayout>
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-    </StackLayout>
+    <Grid RowDefinitions="*, *" >
+        <Button Grid.Row="0" Text="Wszystkie posty" Clicked="GoToAllPosts"/>
+        <Button Grid.Row="1" Text="Utwórz nowy post" Clicked="GoToPostCreator"/>
+    </Grid>
 
 </ContentPage>

@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Postgres.CreatorPage">
+    <ContentPage.Content>
+        
+        <StackLayout Padding="20">
+            <Entry x:Name="title" Placeholder="Tytuł posta" />
+            <Editor x:Name="description" Placeholder="Tutaj wpisz treść posta!" HeightRequest="400" />
+            <Button Text="Zapisz"/>
+        </StackLayout>
+        
+    </ContentPage.Content>
+</ContentPage>
