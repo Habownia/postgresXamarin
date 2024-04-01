@@ -56,11 +56,13 @@ namespace Postgres.Lib
             };
 
 
-            try { 
-                await cmd.ExecuteNonQueryAsync(); 
+            try
+            {
+                await cmd.ExecuteNonQueryAsync();
                 return true;
             }
-            catch (Exception ex) { 
+            catch (Exception ex)
+            {
                 Console.WriteLine($"Query execution failed: {ex.Message}");
                 return false;
             }
@@ -88,6 +90,60 @@ namespace Postgres.Lib
             var reader = await cmd.ExecuteReaderAsync();
 
 
+            var posts = await GetPostsFromReader(reader);
+
+
+            await conn.CloseAsync();
+
+            return posts;
+        }
+
+
+        /// <summary>
+        /// Returns the date the post was created
+        /// </summary>
+        public DateTime GetDateFromId(long id)
+        {
+            DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(id);
+
+            return dateTimeOffset.DateTime;
+        }
+
+
+        /// <summary>
+        /// Returns post data by its id
+        /// </summary>
+        /// <param name="postId">Post id</param>
+        public async Task<Post> GetPostFromId(long postId)
+        {
+            var conn = await InitDB();
+
+
+            var cmd = new NpgsqlCommand("SELECT * FROM posts WHERE id = $1", conn)
+            {
+                Parameters =
+                {
+                    new NpgsqlParameter() { Value = postId },
+                }
+            };
+            var reader = await cmd.ExecuteReaderAsync();
+
+
+            var posts = await GetPostsFromReader(reader);
+
+
+            await conn.CloseAsync();
+            return posts[0];
+        }
+
+
+
+        /// <summary>
+        /// Creates observable collection out of data reader
+        /// </summary>
+        /// <param name="reader">Rows from db</param>
+        private async Task<ObservableCollection<Post>> GetPostsFromReader(NpgsqlDataReader reader)
+        {
             var posts = new ObservableCollection<Post>();
 
             while (await reader.ReadAsync())
@@ -98,9 +154,6 @@ namespace Postgres.Lib
 
                 posts.Add(new Post { Id = id, Name = name, Description = desc });
             }
-            
-
-            await conn.CloseAsync();
 
             return posts;
         }

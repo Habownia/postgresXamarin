@@ -1,4 +1,5 @@
-﻿using Postgres.Models;
+﻿using Postgres.Lib;
+using Postgres.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,23 +14,27 @@ namespace Postgres.Pages
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DetailsPage : ContentPage
     {
+
+        private readonly HelperDB helper = new HelperDB();
+
         public DetailsPage(long id)
         {
             InitializeComponent();
 
-            BindingContext = new Post
-            {
-                Name = "Przykładowy tytuł",
-                Description = "Przykładowy opis",
-                Date = GetDateFromId(id),
-            };
+            SetBindingContext(id);
         }
 
-        private DateTime GetDateFromId(long id)
+        private async void SetBindingContext(long id)
         {
-            DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(id);
+            var post = await helper.GetPostFromId(id);
 
-            return dateTimeOffset.DateTime;
+            BindingContext = new Post
+            {
+                Id = post.Id,
+                Name = post.Name,
+                Description = post.Description,
+                Date = helper.GetDateFromId(id),
+            };
         }
 
         private async void SavePost(object sender, EventArgs e)

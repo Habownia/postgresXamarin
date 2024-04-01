@@ -19,8 +19,6 @@ namespace Postgres
         public AllPostsPage()
         {
             InitializeComponent();
-
-            //ExecInsert(14, "test", "b");
         }
 
         protected override async void OnAppearing()
