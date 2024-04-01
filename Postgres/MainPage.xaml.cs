@@ -21,7 +21,7 @@ namespace Postgres
         {
             InitializeComponent();
 
-            //ExecInsert(12, "a", "b");
+            ExecInsert(14, "test", "b");
             ShowAllPosts();
         }
 
