@@ -1,96 +1,99 @@
-﻿using Npgsql;
-using Postgres.Models;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Numerics;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using Npgsql;
+using Postgres.Models;
+using Postgres.Lib;
 
 namespace Postgres
 {
     public partial class MainPage : ContentPage
     {
-        public static Task<NpgsqlConnection> conn = InitDB();
+        private readonly HelperDB helper = new HelperDB();
 
         public MainPage()
         {
             InitializeComponent();
 
-            ExecInsert(14, "test", "b");
-            ShowAllPosts();
+            //ExecInsert(14, "test", "b");
         }
 
-
-        public static async Task<NpgsqlConnection> InitDB()
+        protected override async void OnAppearing()
         {
-            // nie powinno się dawać hasła do db w kodzie, ale w takim razie jak Pan miałby to odpalić? ;)
-            string connStr = $"Host={GetHost()};Username=postgres;Password=postgres;Database=blog";
-            var conn = new NpgsqlConnection(connStr);
+            base.OnAppearing();
 
-            try { await conn.OpenAsync(); }
-            catch (Exception ex) { Console.WriteLine($"Connection to DB failed: {ex.Message}"); }
-
-            return conn;
+            // shows data from db in a view
+            postListView.ItemsSource = await helper.ShowAllPosts();
         }
 
 
 
-        public async void ExecInsert(int id, string name, string desc)
-        {
-            // https://www.npgsql.org/doc/basic-usage.html#parameters
-            var cmd = new NpgsqlCommand("INSERT INTO posts (id, name, description) VALUES ($1, $2, $3)", await conn)
-            {
-                Parameters =
-                {
-                    new NpgsqlParameter() { Value = id }, 
-                    new NpgsqlParameter() { Value = name}, 
-                    new NpgsqlParameter() { Value = desc} 
-                }
-            };
+        //public static async Task<NpgsqlConnection> InitDB()
+        //{
+        //    // nie powinno się dawać hasła do db w kodzie, ale w takim razie jak Pan miałby to odpalić? ;)
+        //    string connStr = $"Host={GetHost()};Username=postgres;Password=postgres;Database=blog";
+        //    var conn = new NpgsqlConnection(connStr);
 
+        //    try { await conn.OpenAsync(); }
+        //    catch (Exception ex) { Console.WriteLine($"Connection to DB failed: {ex.Message}"); }
 
-            try { await cmd.ExecuteNonQueryAsync(); }
-            catch (Exception ex) { Console.WriteLine($"Query execution failed: {ex.Message}"); }
-        }
+        //    return conn;
+        //}
 
 
 
-        public async void ShowAllPosts()
-        {
-            var cmd = new NpgsqlCommand("SELECT * FROM posts", await conn);
-            var reader = await cmd.ExecuteReaderAsync();
+        //public async void ExecInsert(int id, string name, string desc)
+        //{
+        //    // https://www.npgsql.org/doc/basic-usage.html#parameters
+        //    var cmd = new NpgsqlCommand("INSERT INTO posts (id, name, description) VALUES ($1, $2, $3)", await conn)
+        //    {
+        //        Parameters =
+        //        {
+        //            new NpgsqlParameter() { Value = id }, 
+        //            new NpgsqlParameter() { Value = name}, 
+        //            new NpgsqlParameter() { Value = desc} 
+        //        }
+        //    };
 
-            var posts = new ObservableCollection<Post>();
 
-            while (await reader.ReadAsync())
-            {
-                var id = (int)reader["id"];
-                var name = (string)reader["name"];
-                var desc = (string)reader["description"];
+        //    try { await cmd.ExecuteNonQueryAsync(); }
+        //    catch (Exception ex) { Console.WriteLine($"Query execution failed: {ex.Message}"); }
+        //}
 
-                posts.Add(new Post { Id = id, Name = name, Description = desc });
-            }
 
-            postListView.ItemsSource = posts;
-        }
 
-        /// <summary>
-        /// Method that returns the host address depending on the device platform
-        /// </summary>
-        /// <returns>Host address</returns>
-        public static string GetHost()
-        {
-            var platform = Device.RuntimePlatform;
+        //public async void ShowAllPosts()
+        //{
+        //    var cmd = new NpgsqlCommand("SELECT * FROM posts", await conn);
+        //    var reader = await cmd.ExecuteReaderAsync();
 
-            if (platform == Device.Android) return "10.0.2.2";
+        //    var posts = new ObservableCollection<Post>();
 
-            return "localhost";
-        }
+        //    while (await reader.ReadAsync())
+        //    {
+        //        var id = (int)reader["id"];
+        //        var name = (string)reader["name"];
+        //        var desc = (string)reader["description"];
+
+        //        posts.Add(new Post { Id = id, Name = name, Description = desc });
+        //    }
+
+        //    postListView.ItemsSource = posts;
+        //}
+
+        ///// <summary>
+        ///// Method that returns the host address depending on the device platform
+        ///// </summary>
+        ///// <returns>Host address</returns>
+        //public static string GetHost()
+        //{
+        //    var platform = Device.RuntimePlatform;
+
+        //    if (platform == Device.Android) return "10.0.2.2";
+
+        //    return "localhost";
+        //}
 
     }
 }
