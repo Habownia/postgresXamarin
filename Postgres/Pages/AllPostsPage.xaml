@@ -9,8 +9,9 @@
                   HasUnevenRows="True">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <ViewCell>
+                        <ViewCell Tapped="GoToDetails">
                             <StackLayout Padding="10">
+                                <Label x:Name="postId" Text="{Binding Id}" FontSize="20" IsVisible="false"/>
                                 <Label Text="{Binding Name}" FontSize="20" />
                                 <Label Text="{Binding Description}" FontSize="16" />
                             </StackLayout>

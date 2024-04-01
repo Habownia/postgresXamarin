@@ -1,4 +1,5 @@
 ﻿using Postgres.Lib;
+using Postgres.Pages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,16 @@ namespace Postgres
 
             // shows data from db in a view
             postListView.ItemsSource = await helper.ShowAllPosts();
+        }
+
+        private async void GoToDetails(object sender, EventArgs e)
+        {
+            ViewCell viewCell = (ViewCell)sender;
+            Label idLabel = viewCell.FindByName<Label>("postId");
+
+            long id = long.Parse(idLabel.Text);
+            await Navigation.PushAsync(new DetailsPage(id));
+            //
         }
     }
 }
