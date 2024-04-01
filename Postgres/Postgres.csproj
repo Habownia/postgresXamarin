@@ -18,10 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="AllPostsPage.xaml">
+    <EmbeddedResource Update="Pages\AllPostsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="CreatorPage.xaml">
+    <EmbeddedResource Update="Pages\CreatorPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>
