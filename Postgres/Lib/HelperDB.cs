@@ -9,9 +9,10 @@ namespace Postgres.Lib
 {
     public class HelperDB
     {
-        public static Task<NpgsqlConnection> conn = InitDB();
-
-
+        /// <summary>
+        /// If you <c>OPEN</c> a DB connection you <c>HAVE TO</c> close it! ( Most of the time :3 )
+        /// </summary>
+        /// <returns>You get a DB connection</returns>
         public static async Task<NpgsqlConnection> InitDB()
         {
             // nie powinno się dawać hasła do db w kodzie, ale w takim razie jak Pan miałby to odpalić? ;)
@@ -40,8 +41,10 @@ namespace Postgres.Lib
 
         public async void ExecInsert(int id, string name, string desc)
         {
+            var conn = await InitDB();
+
             // https://www.npgsql.org/doc/basic-usage.html#parameters
-            var cmd = new NpgsqlCommand("INSERT INTO posts (id, name, description) VALUES ($1, $2, $3)", await conn)
+            var cmd = new NpgsqlCommand("INSERT INTO posts (id, name, description) VALUES ($1, $2, $3)", conn)
             {
                 Parameters =
                 {
@@ -54,13 +57,17 @@ namespace Postgres.Lib
 
             try { await cmd.ExecuteNonQueryAsync(); }
             catch (Exception ex) { Console.WriteLine($"Query execution failed: {ex.Message}"); }
+
+            await conn.CloseAsync();
         }
 
 
 
         public async Task<ObservableCollection<Post>> ShowAllPosts()
         {
-            var cmd = new NpgsqlCommand("SELECT * FROM posts", await conn);
+            var conn = await InitDB();
+
+            var cmd = new NpgsqlCommand("SELECT * FROM posts", conn);
             var reader = await cmd.ExecuteReaderAsync();
 
             var posts = new ObservableCollection<Post>();
@@ -73,7 +80,9 @@ namespace Postgres.Lib
 
                 posts.Add(new Post { Id = id, Name = name, Description = desc });
             }
+            
 
+            await conn.CloseAsync();
             return posts;
         }
     }
