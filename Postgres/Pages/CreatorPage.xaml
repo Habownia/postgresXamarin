@@ -5,9 +5,9 @@
     <ContentPage.Content>
         
         <StackLayout Padding="20">
-            <Entry x:Name="title" Placeholder="Tytuł posta" />
-            <Editor x:Name="description" Placeholder="Tutaj wpisz treść posta!" HeightRequest="400" />
-            <Button Text="Zapisz"/>
+            <Entry x:Name="titleEntry" Placeholder="Tytuł posta" />
+            <Editor x:Name="descriptionEntry" Placeholder="Tutaj wpisz treść posta!" HeightRequest="400" />
+            <Button Text="Zapisz" Clicked="SavePost"/>
         </StackLayout>
         
     </ContentPage.Content>

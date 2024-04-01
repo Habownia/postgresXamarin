@@ -39,7 +39,8 @@ namespace Postgres.Lib
         }
 
 
-        public async void ExecInsert(int id, string name, string desc)
+
+        public async void ExecInsert(string name, string desc)
         {
             var conn = await InitDB();
 
@@ -48,7 +49,7 @@ namespace Postgres.Lib
             {
                 Parameters =
                 {
-                    new NpgsqlParameter() { Value = id },
+                    new NpgsqlParameter() { Value = GenerateId() },
                     new NpgsqlParameter() { Value = name},
                     new NpgsqlParameter() { Value = desc}
                 }
@@ -61,20 +62,31 @@ namespace Postgres.Lib
             await conn.CloseAsync();
         }
 
+        /// <summary>
+        /// Generates id for db
+        /// </summary>
+        /// <returns>Milis since the beginning of the unix era</returns>
+        private long GenerateId()
+        {
+            return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        }
+
 
 
         public async Task<ObservableCollection<Post>> ShowAllPosts()
         {
             var conn = await InitDB();
 
+
             var cmd = new NpgsqlCommand("SELECT * FROM posts", conn);
             var reader = await cmd.ExecuteReaderAsync();
+
 
             var posts = new ObservableCollection<Post>();
 
             while (await reader.ReadAsync())
             {
-                var id = (int)reader["id"];
+                var id = (long)reader["id"];
                 var name = (string)reader["name"];
                 var desc = (string)reader["description"];
 
@@ -83,6 +95,7 @@ namespace Postgres.Lib
             
 
             await conn.CloseAsync();
+
             return posts;
         }
     }
