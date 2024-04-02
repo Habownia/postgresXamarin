@@ -2,6 +2,7 @@
 using Postgres.Models;
 using System;
 using System.Collections.ObjectModel;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -156,6 +157,33 @@ namespace Postgres.Lib
             }
 
             return posts;
+        }
+
+
+        public async Task<bool> Delete(long id)
+        {
+            var conn = await InitDB();
+
+            var cmd = new NpgsqlCommand("DELETE from posts WHERE id = $1", conn)
+            {
+                Parameters =
+                {
+                    new NpgsqlParameter() { Value = id },
+                }
+            };
+
+
+            try
+            {
+                await cmd.ExecuteNonQueryAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Query execution failed: {ex.Message}");
+                return false;
+            }
+            finally { await conn.CloseAsync(); }
         }
     }
 }

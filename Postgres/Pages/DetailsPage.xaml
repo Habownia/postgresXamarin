@@ -5,7 +5,7 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Edytuj" Clicked="GoToEdit"/>
-        <ToolbarItem Text="Usuń"/>
+        <ToolbarItem Text="Usuń" Clicked="DeletePost"/>
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
         

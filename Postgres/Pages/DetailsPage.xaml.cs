@@ -45,5 +45,25 @@ namespace Postgres.Pages
         {
             await Navigation.PushAsync(new EditPage(Id));
         }
+
+        private async void DeletePost(object sender, EventArgs e)
+        {
+            bool isSucceded = await helper.Delete(Id);
+            PromptDBQuery(isSucceded);
+        }
+
+        //move
+        private async void PromptDBQuery(bool isSucceded)
+        {
+            if (isSucceded)
+            {
+                await DisplayAlert("Sukces", "Udało się usunąć post!", "OK");
+                await Navigation.PopAsync();
+
+            }
+            else
+                await DisplayAlert("Błąd", "Post nie został usunięty. Spróbuj ponownie!", "OK");
+        }
+
     }
 }
