@@ -86,8 +86,8 @@ namespace Postgres.Lib
         {
             var conn = await InitDB();
 
-
-            var cmd = new NpgsqlCommand("SELECT * FROM posts", conn);
+            // https://www.postgresql.org/docs/14/functions-string.html
+            var cmd = new NpgsqlCommand("SELECT id, name, CONCAT(substring(description for 50), '...') AS description FROM posts", conn);
             var reader = await cmd.ExecuteReaderAsync();
 
 
