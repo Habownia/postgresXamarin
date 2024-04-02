@@ -17,13 +17,17 @@ namespace Postgres.Pages
 
         private readonly HelperDB helper = new HelperDB();
 
+        private new long Id { get; set; }
+
         public DetailsPage(long id)
         {
+            Id = id;
             InitializeComponent();
 
             SetBindingContext(id);
         }
 
+        //move
         private async void SetBindingContext(long id)
         {
             var post = await helper.GetPostFromId(id);
@@ -37,8 +41,9 @@ namespace Postgres.Pages
             };
         }
 
-        private async void SavePost(object sender, EventArgs e)
+        private async void GoToEdit(object sender, EventArgs e)
         {
+            await Navigation.PushAsync(new EditPage(Id));
         }
     }
 }
