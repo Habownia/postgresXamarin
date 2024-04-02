@@ -41,7 +41,7 @@ namespace Postgres.Lib
 
 
 
-        public async Task<bool> ExecInsert(string name, string desc)
+        public async Task<bool> Insert(string name, string desc)
         {
             var conn = await InitDB();
 
@@ -87,7 +87,7 @@ namespace Postgres.Lib
             var conn = await InitDB();
 
             // https://www.postgresql.org/docs/14/functions-string.html
-            var cmd = new NpgsqlCommand("SELECT id, name, CONCAT(substring(description for 50), '...') AS description FROM posts", conn);
+            var cmd = new NpgsqlCommand("SELECT id, name, CONCAT(substring(description for 40), '...') AS description FROM posts", conn);
             var reader = await cmd.ExecuteReaderAsync();
 
 

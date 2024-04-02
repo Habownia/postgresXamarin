@@ -39,31 +39,14 @@ namespace Postgres.Pages
             };
 
 
-            // Checks if title and desc is present
-            if (title == null || title.Length <= 0)
-                await DisplayAlert("Błąd", "Hola, hola! Nie zapominaj o tytule!", "OK");
-            else if (desc == null || desc.Length <= 0)
-                await DisplayAlert("Błąd", "Cóż za brak wyobraźni! Musisz dodać jakąś treść!", "OK");
-            else
+            bool isEntryEmpty = await PostEditorHelper.IsEmptyEntries(title, desc);
+
+            if (!isEntryEmpty)
             {
-                // change after moved
-                bool isSuccessful = await helper.Update(updatedPost);
+                bool isSucceded = await helper.Update(updatedPost);
 
-                PromptDBQuery(isSuccessful);
+                PostEditorHelper.PromptDBQuery(isSucceded, "dodany");
             }
-        }
-
-        //move
-        private async void PromptDBQuery(bool isSuccessful)
-        {
-            if (isSuccessful)
-            {
-                await DisplayAlert("Sukces", "Udało się zedytować post!", "OK");
-                await Navigation.PopAsync();
-
-            }
-            else
-                await DisplayAlert("Błąd", "Post nie został dodany. Spróbuj ponownie!", "OK");
         }
     }
 }

@@ -14,8 +14,8 @@ namespace Postgres.Pages
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DetailsPage : ContentPage
     {
-
-        private readonly HelperDB helper = new HelperDB();
+        private readonly HelperDB helperDB = new HelperDB();
+        private readonly PostEditorHelper postEditorHelper = new PostEditorHelper();
 
         private new long Id { get; set; }
         private Post Post { get; set; }
@@ -26,28 +26,11 @@ namespace Postgres.Pages
             InitializeComponent();
         }
 
-        protected override async void OnAppearing()
+        protected async override void OnAppearing()
         {
             base.OnAppearing();
 
-            SetBindingContext(Id);
-        }
-
-        //move
-        private async void SetBindingContext(long id)
-        {
-            var post = await helper.GetPostFromId(id);
-
-
-            Post = new Post
-            {
-                Id = post.Id,
-                Name = post.Name,
-                Description = post.Description,
-                Date = helper.GetDateFromId(id),
-            };
-
-            BindingContext = Post;
+            Post = await postEditorHelper.SetBindingContext(Id);
         }
 
         private async void GoToEdit(object sender, EventArgs e)
@@ -55,23 +38,11 @@ namespace Postgres.Pages
             await Navigation.PushAsync(new EditPage(Post));
         }
 
+
         private async void DeletePost(object sender, EventArgs e)
         {
-            bool isSucceded = await helper.Delete(Id);
-            PromptDBQuery(isSucceded);
+            bool isSucceded = await helperDB.Delete(Post.Id);
+            PostEditorHelper.PromptDBQuery(isSucceded, "usunięty");
         }
-
-        //move
-        private async void PromptDBQuery(bool isSucceded)
-        {
-            if (isSucceded)
-            {
-                await DisplayAlert("Sukces", "Udało się usunąć post!", "OK");
-                await Navigation.PopAsync();
-            }
-            else
-                await DisplayAlert("Błąd", "Post nie został usunięty. Spróbuj ponownie!", "OK");
-        }
-
     }
 }

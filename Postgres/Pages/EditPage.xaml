@@ -4,7 +4,6 @@
              x:Class="Postgres.Pages.EditPage">
     <ContentPage.Content>
         <StackLayout Padding="20">
-            <!--<Entry x:Name="titleEntry" Text="{Binding Id}" />-->
             <Entry x:Name="titleEntry" Text="{Binding Name}" Placeholder="Tytuł posta" />
             <Editor x:Name="descriptionEntry" Text="{Binding Description}" Placeholder="Tutaj wpisz treść posta!" HeightRequest="400" />
             <Button Text="Zapisz" Clicked="SavePost"/>

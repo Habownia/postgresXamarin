@@ -29,22 +29,9 @@ namespace Postgres
                 await DisplayAlert("Błąd", "Cóż za brak wyobraźni! Musisz dodać jakąś treść!", "OK");
             else
             {
-                bool isSucceded = await helper.ExecInsert(title, desc);
-                PromptDBQuery(isSucceded);
+                bool isSucceded = await helper.Insert(title, desc);
+                PostEditorHelper.PromptDBQuery(isSucceded, "dodany");
             }
-        }
-
-        //move
-        private async void PromptDBQuery(bool isSucceded)
-        {
-            if (isSucceded)
-            {
-                await DisplayAlert("Sukces", "Udało się dodać post!", "OK");
-                await Navigation.PopAsync();
-
-            }
-            else
-                await DisplayAlert("Błąd", "Post nie został dodany. Spróbuj ponownie!", "OK");
         }
     }
 }
