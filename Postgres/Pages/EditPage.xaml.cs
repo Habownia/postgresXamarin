@@ -15,36 +15,28 @@ namespace Postgres.Pages
     public partial class EditPage : ContentPage
     {
         private readonly HelperDB helper = new HelperDB();
+        private readonly Post OldPost;
 
-        public EditPage(long id)
+        public EditPage(Post post)
         {
-            InitializeComponent();
-
             // move
-            SetBindingContext(id);
+            InitializeComponent();
+            BindingContext = post;
+            OldPost = post;
         }
-
-
-        // move
-        private async void SetBindingContext(long id)
-        {
-            var post = await helper.GetPostFromId(id);
-
-            BindingContext = new Post
-            {
-                Id = post.Id,
-                Name = post.Name,
-                Description = post.Description,
-                Date = helper.GetDateFromId(id),
-            };
-        }
-
 
         // TODO: Move to seperate file
         private async void SavePost(object sender, EventArgs e)
         {
             string title = titleEntry.Text;
             string desc = descriptionEntry.Text;
+
+            Post updatedPost = new Post()
+            {
+                Id = OldPost.Id,
+                Name = title,
+                Description = desc,
+            };
 
 
             // Checks if title and desc is present
@@ -54,16 +46,19 @@ namespace Postgres.Pages
                 await DisplayAlert("Błąd", "Cóż za brak wyobraźni! Musisz dodać jakąś treść!", "OK");
             else
             {
-                bool isSuccessful = await helper.ExecInsert(title, desc);
+                // change after moved
+                bool isSuccessful = await helper.Update(updatedPost);
+
                 PromptDBQuery(isSuccessful);
             }
         }
 
+        //move
         private async void PromptDBQuery(bool isSuccessful)
         {
             if (isSuccessful)
             {
-                await DisplayAlert("Sukces", "Udało się dodać post!", "OK");
+                await DisplayAlert("Sukces", "Udało się zedytować post!", "OK");
                 await Navigation.PopAsync();
 
             }

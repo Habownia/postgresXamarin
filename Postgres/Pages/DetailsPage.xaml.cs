@@ -18,13 +18,19 @@ namespace Postgres.Pages
         private readonly HelperDB helper = new HelperDB();
 
         private new long Id { get; set; }
+        private Post Post { get; set; }
 
         public DetailsPage(long id)
         {
             Id = id;
             InitializeComponent();
+        }
 
-            SetBindingContext(id);
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+
+            SetBindingContext(Id);
         }
 
         //move
@@ -32,18 +38,21 @@ namespace Postgres.Pages
         {
             var post = await helper.GetPostFromId(id);
 
-            BindingContext = new Post
+
+            Post = new Post
             {
                 Id = post.Id,
                 Name = post.Name,
                 Description = post.Description,
                 Date = helper.GetDateFromId(id),
             };
+
+            BindingContext = Post;
         }
 
         private async void GoToEdit(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new EditPage(Id));
+            await Navigation.PushAsync(new EditPage(Post));
         }
 
         private async void DeletePost(object sender, EventArgs e)
@@ -59,7 +68,6 @@ namespace Postgres.Pages
             {
                 await DisplayAlert("Sukces", "Udało się usunąć post!", "OK");
                 await Navigation.PopAsync();
-
             }
             else
                 await DisplayAlert("Błąd", "Post nie został usunięty. Spróbuj ponownie!", "OK");

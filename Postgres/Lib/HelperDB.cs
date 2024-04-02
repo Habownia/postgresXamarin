@@ -164,7 +164,7 @@ namespace Postgres.Lib
         {
             var conn = await InitDB();
 
-            var cmd = new NpgsqlCommand("DELETE from posts WHERE id = $1", conn)
+            var cmd = new NpgsqlCommand("DELETE FROM posts WHERE id = $1", conn)
             {
                 Parameters =
                 {
@@ -185,5 +185,35 @@ namespace Postgres.Lib
             }
             finally { await conn.CloseAsync(); }
         }
+
+
+        public async Task<bool> Update(Post post)
+        {
+            var conn = await InitDB();
+
+            var cmd = new NpgsqlCommand("UPDATE posts SET name = $1, description = $2 WHERE id = $3", conn)
+            {
+                Parameters =
+                {
+                    new NpgsqlParameter() { Value = post.Name },
+                    new NpgsqlParameter() { Value = post.Description },
+                    new NpgsqlParameter() { Value = post.Id },
+                }
+            };
+
+
+            try
+            {
+                await cmd.ExecuteNonQueryAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Query execution failed: {ex.Message}");
+                return false;
+            }
+            finally { await conn.CloseAsync(); }
+        }
+
     }
 }
