@@ -22,12 +22,9 @@ namespace Postgres
             string desc = descriptionEntry.Text;
 
 
-            // Checks if title and desc is present
-            if (title == null || title.Length <= 0)
-                await DisplayAlert("Błąd", "Hola, hola! Nie zapominaj o tytule!", "OK");
-            else if (desc == null || desc.Length <= 0)
-                await DisplayAlert("Błąd", "Cóż za brak wyobraźni! Musisz dodać jakąś treść!", "OK");
-            else
+            bool isEntryEmpty = await PostEditorHelper.IsEmptyEntries(title, desc);
+
+            if (!isEntryEmpty)
             {
                 bool isSucceded = await helper.Insert(title, desc);
                 PostEditorHelper.PromptDBQuery(isSucceded, "dodany");

@@ -36,7 +36,11 @@ namespace Postgres
 
             long id = long.Parse(idLabel.Text);
             await Navigation.PushAsync(new DetailsPage(id));
-            //
+        }
+
+        private async void GoToCreate(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new CreatorPage());
         }
     }
 }

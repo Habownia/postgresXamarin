@@ -33,6 +33,7 @@ namespace Postgres.Pages
             Post = await postEditorHelper.SetBindingContext(Id);
         }
 
+
         private async void GoToEdit(object sender, EventArgs e)
         {
             await Navigation.PushAsync(new EditPage(Post));
@@ -42,7 +43,10 @@ namespace Postgres.Pages
         private async void DeletePost(object sender, EventArgs e)
         {
             bool isSucceded = await helperDB.Delete(Post.Id);
-            PostEditorHelper.PromptDBQuery(isSucceded, "usunięty");
+
+            var choice = await DisplayAlert("Uwaga!", "Usunięcie posta jest nieodwracalne. Czy chcesz usunąć?", "USUŃ", "ANULUJ");
+            if (choice)
+                PostEditorHelper.PromptDBQuery(isSucceded, "usunięty");
         }
     }
 }
