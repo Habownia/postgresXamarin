@@ -36,7 +36,7 @@ This simple Xamarin application allows users to perform CRUD (Create, Read, Upda
    blog    | postgres | UTF8     | libc            | Polish_Poland.1250         | Polish_Poland.1250         |            |
 
 
-   \change blog # change db
+   \c blog # change db
 
    \include 'C:\\{path_to_dir}\\postgres-blog.sql' # Use double slash and single quotes!!!
    ```
