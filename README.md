@@ -28,7 +28,7 @@ This simple Xamarin application allows users to perform CRUD (Create, Read, Upda
    ```
 
    ```sql
-   CREATE DATABASE blog1;
+   CREATE DATABASE blog;
    \list # you should have blog in our db list
                                                           List of databases
    Name    |  Owner   | Encoding | Locale Provider |          Collate           |           Ctype            | ICU Locale | ICU Rules |   Access privileges
